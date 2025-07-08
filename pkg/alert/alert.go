@@ -30,6 +30,8 @@ type AlertGroup struct {
 	ExternalURL       string            `json:"externalURL"`
 }
 
+type Alerts []Alert
+
 type Alert struct {
 	// 标记位, 表示报警信息是否已经写入 DB.
 	Loaded bool `json:"-"`
@@ -92,7 +94,5 @@ func (a *Alert) SetResolved() {
 	a.Loaded = false
 	a.Status = Resolved
 	a.EndsAt = time.Now()
-	a.LoadedAt = time.Time{}
+	a.LoadedAt = time.Now()
 }
-
-type Alerts []Alert
