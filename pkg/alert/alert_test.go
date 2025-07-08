@@ -199,3 +199,49 @@ func TestSetResolved(t *testing.T) {
 	require.Equal(t, Resolved, alert.Status)
 	require.False(t, alert.EndsAt.IsZero())
 }
+
+func TestAlert_Clone(t *testing.T) {
+	now := time.Now()
+	alert := Alert{
+		Loaded:       true,
+		LoadedAt:     now,
+		Fingerprint:  "fingerprint",
+		Status:       Firing,
+		StartsAt:     now.Add(-time.Hour),
+		EndsAt:       now.Add(-time.Minute),
+		GeneratorURL: "http://example.com",
+		Labels: map[string]string{
+			"alertname": "TestAlert",
+			"severity":  "critical",
+			"instance":  "localhost:9090",
+		},
+		Annotations: map[string]string{
+			"summary":     "This is a test alert",
+			"description": "This alert is for testing purposes",
+		},
+	}
+
+	// 能够正确拷贝值
+	copy := alert.Clone()
+	if diff := cmp.Diff(alert, *copy); diff != "" {
+		t.Errorf("原始数据与副本数据不一致 (-原始 +副本):\n%s", diff)
+	}
+
+	// 修改值类型的值不会影响拷贝结果.
+	alert.Status = Resolved
+	if diff := cmp.Diff(alert, *copy); diff == "" {
+		t.Errorf("原始数据与副本之间非深拷贝")
+	}
+
+	// 恢复原始状态
+	alert.Status = Firing // 恢复原始状态
+	if diff := cmp.Diff(alert, *copy); diff != "" {
+		t.Errorf("原始数据未恢复原始状态")
+	}
+
+	// 修改引用类型的值不会影响拷贝结果.
+	alert.Labels["alertname"] = "ModifiedAlert"
+	if diff := cmp.Diff(alert, *copy); diff == "" {
+		t.Errorf("原始数据与副本之间非深拷贝")
+	}
+}

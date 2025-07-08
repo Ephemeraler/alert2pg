@@ -96,3 +96,29 @@ func (a *Alert) SetResolved() {
 	a.EndsAt = time.Now()
 	a.LoadedAt = time.Now()
 }
+
+func (a *Alert) Clone() *Alert {
+	return &Alert{
+		Loaded:       a.Loaded,
+		LoadedAt:     a.LoadedAt,
+		Fingerprint:  a.Fingerprint,
+		Status:       a.Status,
+		StartsAt:     a.StartsAt,
+		EndsAt:       a.EndsAt,
+		Labels:       cloneStringMap(a.Labels),
+		Annotations:  cloneStringMap(a.Annotations),
+		GeneratorURL: a.GeneratorURL,
+	}
+}
+
+// cloneStringMap 深拷贝 map.
+func cloneStringMap(src map[string]string) map[string]string {
+	if src == nil {
+		return nil
+	}
+	dst := make(map[string]string, len(src))
+	for k, v := range src {
+		dst[k] = v
+	}
+	return dst
+}
