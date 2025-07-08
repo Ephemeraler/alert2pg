@@ -1,3 +1,4 @@
 # 指定哪些文件/目录不被 Git 版本控制, 如编译产物、临时文件等
 .DS_Store
 alert2pg
+TODO.md

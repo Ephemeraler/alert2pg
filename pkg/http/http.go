@@ -31,7 +31,7 @@ func (a *Alert) UnmarshalJSON(data []byte) error {
 
 type Alerts []Alert
 
-// GetFiringAlertsFromAlertmanager 从 Alertmanager 获取当前处于 Firing 状态的报警信息.
+// GetFiringAlertsFromAlertmanager 从 Alertmanager 获取当前处于 Firing 状态的报警信息, 并初始化标记位.
 func GetFiringAlertsFromAlertmanager(addr string, active, silenced, inhibited, unprocessed bool) (alert.Alerts, error) {
 	alerts := make(alert.Alerts, 0)
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
